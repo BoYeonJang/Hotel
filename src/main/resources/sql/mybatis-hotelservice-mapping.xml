@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="HotelMapper">
+
+	<!-- 개인회원 -->
+	<insert id="registMember" parameterType="memberDto">
+		INSERT
+		INTO Member(id, password, name, phone, address, email, hotel_id)
+		VALUES(#{id}, #{password}, #{name}, #{phone}, #{address}, #{email}, #{hotelId})
+	</insert>
+	<update id="updateMember" parameterType="memberDto">
+		UPDATE
+		Member set password=#{password}, name=#{name}, phone=#{phone},
+		address=#{address}, email=#{email}
+		where id=#{id}
+	</update>
+	<delete id="deleteMember" parameterType="string">
+		DELETE
+		FROM Member
+		WHERE id=#{VALUE}
+	</delete>
+	<sql id="select-member">
+		SELECT id, password, name, phone, address, email, hotel_id hotelId
+		FROM Member
+	</sql>
+	<select id="getAllMember" resultType="memberDto">
+		<include refid="select-member" />
+	</select>
+	<select id="getMemberById" resultType="memberDto"
+		parameterType="string">
+		<include refid="select-member" />
+		WHERE id=#{VALUE}
+	</select>
+	<select id="loginMember" parameterType="memberDto" resultType="memberDto">
+		<include refid="select-member" />
+		where id=#{id} and password=#{password}
+	</select>
+	<!-- 보류 아이디찾기 <select id="findId" parameterType="string" resultType="string"> 
+		SELECT id FROM Member WHERE phone=#{value} </select> 비밀번호 찾기 <select id="findPassword" 
+		parameterType="string" resultType="string"> select password from Member where 
+		id=#{value} </select> -->
+
+
+
+	<!-- 예약 -->
+	<insert id="addReservation" parameterType="reservationDto">
+		INSERT
+		INTO reservation(member_id, room_id, checkin, checkout, guest_number, card_number)
+		VALUES(#{memberId}, #{roomId}, #{checkin}, #{checkout}, #{guestNumber}, #{cardNumber})
+	</insert>
+	<delete id="deleteReservation" parameterType="int">
+		DELETE FROM
+		reservation WHERE id =#{value}
+	</delete>
+	<sql id="select-reservation">
+		SELECT id, member_id memberId, Room_id roomId, checkin, checkout, guest_number guestNumber, card_number cardNumber
+		FROM Reservation
+	</sql>
+	<select id="getReservationByMemberId" resultType="reservationDto" parameterType="string">
+		<include refid="select-reservation" />
+		WHERE member_id = #{VALUE}
+	</select>
+	<select id="getReservationById" resultType="reservationDto" parameterType="int">
+		<include refid="select-reservation" />
+		WHERE id = #{VALUE}
+	</select>
+	<select id="getReservationByHotelId" resultType="reservationDto" parameterType="string">
+		<include refid="select-reservation" />
+		WHERE hotel_id = #{VALUE}
+	</select>
+	<select id="getAllReservation" resultType="reservationDto">
+		<include refid="select-reservation"></include>
+	</select>
+
+
+
+	<!-- 호텔 -->
+	<insert id="addHotel" parameterType="HotelDto">
+		INSERT
+		INTO Hotel(id,name,location,img,description)
+		VALUES(#{id},#{name},#{location},#{img},#{description})
+	</insert>
+	<update id="updateHotel" parameterType="HotelDto">
+		UPDATE Hotel
+		Set name=#{name},location=#{location},img=#{img},description=#{description},approved=#{approved}
+		WHERE id=#{id}
+	</update>
+	<delete id="deleteHotel" parameterType="string">
+		DELETE
+		FROM Hotel
+		WHERE id=#{VALUE}
+	</delete>
+	<sql id="select-hotel">
+		SELECT
+		id,name,location,img,description,approved
+		FROM Hotel
+	</sql>
+	<select id="selectAllHotel" resultType="HotelDto">
+		<include refid="select-hotel"></include>
+	</select>
+	<select id="selectHotelById" parameterType="string" resultType="HotelDto">
+		<include refid="select-hotel"></include>
+		WHERE id=#{value}
+	</select>
+	<select id="selectLikeHotelName" parameterType="string" resultType="HotelDto">
+		<include refid="select-hotel"></include>
+		WHERE location LIKE CONCAT('%',#{value},'%')
+	</select>
+
+
+	<!-- 객실 -->
+	<insert id="addRoom" parameterType="RoomDto">
+		INSERT INTO Room(id,name,people_limited_number,price,count,Hotel_id)
+		VALUES(#{id},#{name},#{peopleLimitedNumber},#{price},#{count},#{hotelId})
+	</insert>
+	<update id="updateRoom" parameterType="RoomDto">
+		UPDATE Room Set name=#{name},
+		people_limited_number=#{peopleLimitedNumber},price=#{price},count=#{count},Hotel_id=#{hotelId}
+		WHERE id=#{id}
+	</update>
+	<delete id="deleteRoom" parameterType="int">
+		DELETE FROM Room where id=#{value}
+	</delete>
+	<sql id="select-room">
+		SELECT id, name, people_limited_number peopleLimitedNumber, price, count, hotel_id HotelId
+		FROM Room
+	</sql>
+	<select id="selectAllRoom" resultType="RoomDto">
+		<include refid="select-room"/>
+	</select>
+	<select id="selectRoomById" resultType="RoomDto" parameterType="int">
+		<include refid="select-room"/>
+		WHERE id=#{VALUE}
+	</select>
+	<select id="selectRoomByHotelId" resultType="RoomDto" parameterType="string">
+		<include refid="select-room"/>
+		WHERE Hotel_id=#{VALUE}
+	</select>
+	
+	<select id="selectPeopleLimit" parameterType="int" resultType="RoomDto" >
+		<![CDATA[
+		SELECT id,name,people_limited_number peopleLimitedNumber,price,count,Hotel_id hotelId 
+		FROM Room WHERE people_limited_number <= #{VALUE}
+		]]>
+	</select>
+	
+	<select id="selectAllOptionApply" resultType="RoomDto" parameterType="OptionDto">
+	<!--  <![CDATA[
+	Select  
+	id,name,people_limited_number peopleLimitedNumber,price,count,Hotel_id hotelId
+	From room
+	WHERE id = (Select room_id From reservation where !(checkin between #{checkin} and #{checkout}) and
+	!(checkout between #{checkin} and #{checkout})) and people_limited_number<= #{limit} ;
+	]]>
+	-->
+		<![CDATA[
+		SELECT id,name,people_limited_number peopleLimitedNumber,price,count,Hotel_id hotelId
+		FROM room AS rm , 
+		(Select distinct room_id From reservation where !(checkin between #{checkin} and #{checkout}) and
+		!(checkout between #{checkin} and #{checkout})) as temp 
+		WHERE rm.id = temp.room_id and rm.people_limited_number <= #{limit} and hotel_id=#{hotel};
+		]]>
+	</select>
+	
+	
+	<!-- 평점/ 리뷰 /후기 -->
+	<insert id="addReview" parameterType="ReviewDto">
+		INSERT
+		INTO Review(id,content,score,Member_id,Hotel_id)
+		VALUES(#{id},#{content},#{score},#{memberId},#{hotelId})
+	</insert>
+	<update id="updateReview" parameterType="ReviewDto">
+		UPDATE
+		Review Set content=#{content} WHERE id=#{id}
+	</update>
+	<delete id="deleteReview" parameterType="int">
+		DELETE FROM Review WHERE id=#{id}
+	</delete>
+	<sql id="select-review">
+		SELECT id, content, score, Member_id memberId, Hotel_id hotelId
+		FROM Review
+	</sql>
+	<select id="selectAllReview" resultType="ReviewDto">
+		<include refid="select-review"/>
+	</select>
+	<select id="selectReviewById" resultType="ReviewDto" parameterType="int">
+		<include refid="select-review"/>
+		WHERE id=#{VALUE}
+	</select>
+	<select id="selectReviewByHotelId" resultType="ReviewDto" parameterType="string">
+		<include refid="select-review"/>
+		WHERE Hotel_id=#{VALUE}
+	</select>
+	<select id="selectReviewByMemberId" resultType="ReviewDto" parameterType="string">
+		<include refid="select-review"/>
+		WHERE Member_id=#{VALUE}
+	</select>
+	<select id="selectReviewByScore" resultType="ReviewDto" parameterType="string">
+		<include refid="select-review"/>
+		where score=#{VALUE} ORDER BY score DESC
+	</select>
+</mapper>

@@ -1,0 +1,16 @@
+package com.encore.hotel.repo;
+
+import java.util.List;
+
+import com.encore.hotel.domain.HotelDto;
+
+
+
+public interface HotelDAO {
+	int addHotel(HotelDto hotel) throws Exception;
+	int updateHotel(HotelDto hotel) throws Exception;
+	int removeHotel(String id) throws Exception;
+	HotelDto getHotel(String id) throws Exception;
+	List<HotelDto> getHotelList() throws Exception;
+	List<HotelDto> getLikeHotelName(String name) throws Exception;
+}
