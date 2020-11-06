@@ -156,18 +156,20 @@
 	]]>
 	-->
 		<![CDATA[
-      SELECT id,name,people_limited_number peopleLimitedNumber,price,count,Hotel_id hotelId 
-       FROM room WHERE count > (SELECT distinct count(room_id) FROM reservation WHERE (checkin between  #{checkin} and #{checkout}) 
-       and (checkout between #{checkin} and #{checkout})) and people_limited_number>= #{limit}  and hotel_id=#{hotel} ;
-      ]]>
+		SELECT id,name,people_limited_number peopleLimitedNumber,price,count,Hotel_id hotelId
+		FROM room AS rm , 
+		(Select distinct room_id From reservation where !(checkin between #{checkin} and #{checkout}) and
+		!(checkout between #{checkin} and #{checkout})) as temp 
+		WHERE rm.id = temp.room_id and rm.people_limited_number <= #{limit} and hotel_id=#{hotel};
+		]]>
 	</select>
 	
 	
 	<!-- 평점/ 리뷰 /후기 -->
 	<insert id="addReview" parameterType="ReviewDto">
 		INSERT
-		INTO Review(content, score, member_id, hotel_id)
-		VALUES(#{content}, #{score}, #{memberId}, #{hotelId})
+		INTO Review(id,content,score,Member_id,Hotel_id)
+		VALUES(#{id},#{content},#{score},#{memberId},#{hotelId})
 	</insert>
 	<update id="updateReview" parameterType="ReviewDto">
 		UPDATE
