@@ -112,19 +112,19 @@
 
 	<!-- 객실 -->
 	<insert id="addRoom" parameterType="RoomDto">
-		INSERT INTO Room(id,name,people_limited_number,price,count,Hotel_id)
-		VALUES(#{id},#{name},#{peopleLimitedNumber},#{price},#{count},#{hotelId})
+		INSERT INTO Room(id,name,people_limited_number,price,count,Hotel_id,img)
+		VALUES(#{id},#{name},#{peopleLimitedNumber},#{price},#{count},#{hotelId},#{img})
 	</insert>
 	<update id="updateRoom" parameterType="RoomDto">
 		UPDATE Room Set name=#{name},
-		people_limited_number=#{peopleLimitedNumber},price=#{price},count=#{count},Hotel_id=#{hotelId}
+		people_limited_number=#{peopleLimitedNumber},price=#{price},count=#{count},Hotel_id=#{hotelId},img=#{img}
 		WHERE id=#{id}
 	</update>
 	<delete id="deleteRoom" parameterType="int">
 		DELETE FROM Room where id=#{value}
 	</delete>
 	<sql id="select-room">
-		SELECT id, name, people_limited_number peopleLimitedNumber, price, count, hotel_id HotelId
+		SELECT id, name, people_limited_number peopleLimitedNumber, price, count, hotel_id HotelId, img
 		FROM Room
 	</sql>
 	<select id="selectAllRoom" resultType="RoomDto">
@@ -141,7 +141,7 @@
 	
 	<select id="selectPeopleLimit" parameterType="int" resultType="RoomDto" >
 		<![CDATA[
-		SELECT id,name,people_limited_number peopleLimitedNumber,price,count,Hotel_id hotelId 
+		SELECT id,name,people_limited_number peopleLimitedNumber,price,count,Hotel_id hotelId,img
 		FROM Room WHERE people_limited_number <= #{VALUE}
 		]]>
 	</select>
@@ -156,7 +156,7 @@
 	]]>
 	-->
 		<![CDATA[
-      SELECT id,name,people_limited_number peopleLimitedNumber,price,count,Hotel_id hotelId 
+      SELECT id,name,people_limited_number peopleLimitedNumber,price,count,Hotel_id hotelId, img
        FROM room WHERE count > (SELECT distinct count(room_id) FROM reservation WHERE (checkin between  #{checkin} and #{checkout}) 
        and (checkout between #{checkin} and #{checkout})) and people_limited_number>= #{limit}  and hotel_id=#{hotel} ;
       ]]>
