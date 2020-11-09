@@ -8,7 +8,15 @@ public class ReservationDto {
 	private String checkout;
 	private int guestNumber;
 	private String cardNumber;
+	private String resDate;
+	
 
+	public String getResDate() {
+		return resDate;
+	}
+	public void setResDate(String resDate) {
+		this.resDate = resDate;
+	}
 	public int getId() {
 		return id;
 	}

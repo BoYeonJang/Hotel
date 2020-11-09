@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.encore.hotel.domain.ReservationDto;
+import com.encore.hotel.domain.chartDto;
 import com.encore.hotel.repo.ReservationDao;
 
 @Service
@@ -37,6 +38,11 @@ public class ReservationServiceImpl implements ReservationService{
 	@Override
 	public List<ReservationDto> getAllReservation() throws Exception {
 		return reservationDao.getAllReservation();
+	}
+	
+	@Override
+	public List<chartDto> getMonth() throws Exception {
+		return reservationDao.getMonth();
 	}
 
 }

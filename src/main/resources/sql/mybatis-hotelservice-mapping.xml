@@ -47,8 +47,8 @@
 	<!-- 예약 -->
 	<insert id="addReservation" parameterType="reservationDto">
 		INSERT
-		INTO reservation(member_id, room_id, checkin, checkout, guest_number, card_number)
-		VALUES(#{memberId}, #{roomId}, #{checkin}, #{checkout}, #{guestNumber}, #{cardNumber})
+		INTO reservation(member_id, room_id, checkin, checkout, guest_number, card_number,res_date)
+		VALUES(#{memberId}, #{roomId}, #{checkin}, #{checkout}, #{guestNumber}, #{cardNumber},#{resDate})
 	</insert>
 	<delete id="deleteReservation" parameterType="int">
 		DELETE FROM
@@ -72,6 +72,9 @@
 	</select>
 	<select id="getAllReservation" resultType="reservationDto">
 		<include refid="select-reservation"></include>
+	</select>
+	<select id="selectMonthCount" resultType = "chartDto">
+	select count(SUBSTR(res_date, 6, 2 )) as cnt,SUBSTR(res_date, 6, 2 ) as mo from reservation GROUP BY mo
 	</select>
 
 

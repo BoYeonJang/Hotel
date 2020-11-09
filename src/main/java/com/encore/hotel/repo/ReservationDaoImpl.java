@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.encore.hotel.domain.ReservationDto;
+import com.encore.hotel.domain.chartDto;
 
 @Repository
 public class ReservationDaoImpl implements ReservationDao{
@@ -44,6 +45,11 @@ public class ReservationDaoImpl implements ReservationDao{
 		return sqlSession.selectList(ns + "getAllReservation");
 	}
 	
+	@Override
+	public List<chartDto> getMonth() throws Exception {
+		return sqlSession.selectList(ns+"selectMonthCount");
+		
+	}
 	
 
 }

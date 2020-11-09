@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.encore.hotel.domain.ReservationDto;
+import com.encore.hotel.domain.chartDto;
 import com.encore.hotel.service.ReservationService;
 
 import io.swagger.annotations.Api;
@@ -64,6 +65,14 @@ public class ReservationController {
 		List<ReservationDto> reservations = service.getAllReservation();
 		if(reservations.isEmpty()) return new ResponseEntity(HttpStatus.NO_CONTENT);
 		return new ResponseEntity(reservations, HttpStatus.OK);
+	}
+	
+	@GetMapping("/findReservationMounth")
+	public ResponseEntity<List<chartDto>> findReservationMounth() throws Exception{
+		List<chartDto> rooms=service.getMonth();
+		
+		if(rooms.isEmpty()) return new ResponseEntity(HttpStatus.NO_CONTENT);
+		return new ResponseEntity(rooms,HttpStatus.OK);
 	}
 
 }
