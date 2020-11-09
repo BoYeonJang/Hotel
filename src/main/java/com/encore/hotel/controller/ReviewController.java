@@ -26,7 +26,8 @@ public class ReviewController {
 	
 	@PostMapping("/addReview")
 	public ResponseEntity addReview(@RequestBody ReviewDto review) throws Exception{
-		service.addReview(review);
+		int result = service.addReview(review);
+		if(result<1) return new ResponseEntity(HttpStatus.NO_CONTENT);
 		return new ResponseEntity(HttpStatus.OK);
 	}
 	
